@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOS Tech Archives 1999</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: default;
+        }
+
+        :root {
+            --terminal-green: #33ff33;
+            --terminal-amber: #ffb000;
+            --dark-bg: #000420;
+            --terminal-white: #c3c3c3;
+            --terminal-gray: #545454;
+            --scanline-opacity: 0.15;
+        }
+
+        ::selection {
+            background: var(--terminal-amber);
+            color: var(--dark-bg);
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--dark-bg);
+            color: var(--terminal-green);
+            line-height: 1.4;
+            overflow-x: hidden;
+            font-size: 18px;
+        }
+
+        .crt {
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent,
+                transparent 50%,
+                rgba(0, 0, 0, 0.4) 50%,
+                rgba(0, 0, 0, 0.4)
+            );
+            background-size: 100% 4px;
+            z-index: 999;
+            pointer-events: none;
+            animation: moveLines 10s linear infinite;
+        }
+
+        @keyframes moveLines {
+            from { background-position: 0 0; }
+            to { background-position: 0 -100px; }
+        }
+
+        .noise::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            pointer-events: none;
+            animation: noise 8s steps(10) infinite;
+            background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVfJ92AAAACHRSTlMAACAgn5+/v7/YB9IWAAACKElEQVQ4y2WTzWvTYBjAn7RJ2nRdt1brhBV6kG0HmQy8DJQdBg49Kh4Ee1lOu+yyyspgoAdBcHjqZR7EjP0Bgj0tfW9Y0UE9WXDsYUpO6+jFg9+P5E2TNvCQ9/l4f7zf7/O8SUJGRoEQaLVaGxsbkUjkwe7u7vT09OL29jZaJAQCAYj09/e3tbUlk8nd3d2rq6uVlZXl5eXFxcX5+fn4+PijzMzMzM7OzsXFxfX1dTabPT8/v7y8LBQKUiwW6/F6vbVkMhkOh91udzgcXltbC4VCuVxucHBweXmZYZhEImE0GkOh0OTkpEQi4fP5JBLJwMDA1dUVwzAajYaiKKPRqNFo5HI5h8PR3NwskUiqqqqsVmtra2t/f39TUxOfz29oaJDJZE1NTRwOh8vlCoVClUql0+l0Op1arWYYRqFQKJVKhmFYlmVZVq/Xs9lsuVwul8vVarVGoxkdHZ2YmGBZVqPRsCwrlUpFIhFFUcFgMBwO0zTt8Xii0WhfX9/Q0JBWqxWLxRRFpdPpeDxOkmRPT08qlRobGxseHjYYDL29vTqdzuVyud3ubDZbKpVwHI9EIoFA4OzsDEEQBEHC4XAymYQeOI5Ho9FcLofjeC6Xi8VioVDocDgcDkcqlTo+Pj46OopEIqVSCU4URVEQBEmS4MMwzO/3H6IE+v9yuRxN0wAKBAJisRhFUZ/PVygUMMwD8gVoQO6BQKC2qAf7oLa2tn/LAzr478f/9Q9L5R2/RlwfjwAAAABJRU5ErkJggg==");
+        }
+
+        @keyframes noise {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0); }
+            70% { transform: translate(0, 10%); }
+            80% { transform: translate(-15%, 0); }
+            90% { transform: translate(10%, 5%); }
+        }
+
+        .screen-flicker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(51, 255, 51, 0.03);
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+            z-index: 1000;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 2px solid var(--terminal-green);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .ascii-title {
+            white-space: pre;
+            font-size: 12px;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--terminal-amber);
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--terminal-green);
+        }
+
+        nav a {
+            color: var(--terminal-green);
+            text-decoration: none;
+            margin: 0 1rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--terminal-green);
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background: var(--terminal-green);
+            color: var(--dark-bg);
+        }
+
+        .prompt {
+            color: var(--terminal-amber);
+            margin-right: 0.5rem;
+        }
+
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .fact-section {
+            margin: 2rem 0;
+        }
+
+        .fact-header {
+            border-bottom: 1px solid var(--terminal-green);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            color: var(--terminal-amber);
+        }
+
+        .fact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .fact-card {
+            border: 1px solid var(--terminal-green);
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .fact-card::before {
+            content: '>';
+            position: absolute;
+            left: 0.5rem;
+            color: var(--terminal-amber);
+        }
+
+        .fact-date {
+            color: var(--terminal-amber);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline {
+            margin: 3rem 0;
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: var(--terminal-green);
+        }
+
+        .timeline-item {
+            margin-bottom: 2rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.25rem;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background: var(--terminal-green);
+            border: 2px solid var(--dark-bg);
+        }
+
+        .year-marker {
+            color: var(--terminal-amber);
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            border-bottom: 1px solid var(--terminal-amber);
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid var(--terminal-green);
+            margin-top: 2rem;
+        }
+
+        .system-info {
+            font-size: 0.9rem;
+            color: var(--terminal-gray);
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+
+            .ascii-title {
+                font-size: 8px;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .fact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            nav a {
+                display: block;
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="crt">
+        <div class="scanline"></div>
+        <div class="noise"></div>
+        <div class="screen-flicker"></div>
+
+        <header>
+            <pre class="ascii-title">
+▄▄▄█████▓▓█████  ▄████▄   ██░ ██     ▄▄▄       ██▀███   ▄████▄   ██░ ██  ██▓ ██▒   █▓▓█████   ██████ 
+▓  ██▒ ▓▒▓█   ▀ ▒██▀ ▀█  ▓██░ ██▒   ▒████▄    ▓██ ▒ ██▒▒██▀ ▀█  ▓██░ ██▒▓██▒▓██░   █▒▓█   ▀ ▒██    ▒ 
+▒ ▓██░ ▒░▒███   ▒▓█    ▄ ▒██▀▀██░   ▒██  ▀█▄  ▓██ ░▄█ ▒▒▓█    ▄ ▒██▀▀██░▒██▒ ▓██  █▒░▒███   ░ ▓██▄   
+░ ▓██▓ ░ ▒▓█  ▄ ▒▓▓▄ ▄██▒░▓█ ░██    ░██▄▄▄▄██ ▒██▀▀█▄  ▒▓▓▄ ▄██▒░▓█ ░██ ░██░  ▒██ █░░▒▓█  ▄   ▒   ██▒
+  ▒██▒ ░ ░▒████▒▒ ▓███▀ ░░▓█▒░██▓    ▓█   ▓██▒░██▓ ▒██▒▒ ▓███▀ ░░▓█▒░██▓░██░   ▒▀█░  ░▒████▒▒██████▒▒
+            </pre>
+            <div><span class="prompt">C:\></span>LOADING DOS TECH ARCHIVES...<span class="blink">_</span></div>
+        </header>
+
+        <nav>
+            <a href="#hardware">HARDWARE</a>
+            <a href="#software">SOFTWARE</a>
+            <a href="#internet">INTERNET</a>
+            <a href="#games">GAMES</a>
+        </nav>
+
+        <div class="container">
+            <section id="timeline" class="timeline">
+                <h2 class="fact-header">TECH EVOLUTION: 1990-1999</h2>
+                
+                <div class="year-marker">1990</div>
+                <div class="timeline-item">
+                    <div class="fact-date">MAR 1990</div>
+                    <p>Windows 3.0 released, introducing Program Manager and improved UI</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">OCT 1990</div>
+                    <p>First commercial internet dial-up access provider (world.std.com) debuts</p>
+                </div>
+
+                <div class="year-marker">1991</div>
+                <div class="timeline-item">
+                    <div class="fact-date">AUG 1991</div>
+                    <p>World Wide Web becomes publicly available. Tim Berners-Lee publishes the first website.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">SEP 1991</div>
+                    <p>Linux kernel 0.01 released by Linus Torvalds</p>
+                </div>
+
+                <div class="year-marker">1992</div>
+                <div class="timeline-item">
+                    <div class="fact-date">APR 1992</div>
+                    <p>Windows 3.1 released, introducing TrueType fonts and multimedia support</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">NOV 1992</div>
+                    <p>The first smartphone, IBM Simon, is introduced</p>
+                </div>
+
+                <div class="year-marker">1993</div>
+                <div class="timeline-item">
+                    <div class="fact-date">APR 1993</div>
+                    <p>NCSA Mosaic, the first popular web browser, is released</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">DEC 1993</div>
+                    <p>DOOM released by id Software, revolutionizing 3D gaming</p>
+                </div>
+
+                <div class="year-marker">1994</div>
+                <div class="timeline-item">
+                    <div class="fact-date">MAR 1994</div>
+                    <p>Yahoo! founded as "Jerry and David's Guide to the World Wide Web"</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">DEC 1994</div>
+                    <p>PlayStation released in Japan, marking Sony's entry into gaming</p>
+                </div>
+
+                <div class="year-marker">1995</div>
+                <div class="timeline-item">
+                    <div class="fact-date">MAY 1995</div>
+                    <p>Java programming language officially released by Sun Microsystems</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">AUG 1995</div>
+                    <p>Windows 95 launches with the Start Menu and taskbar</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">SEP 1995</div>
+                    <p>Amazon.com launches as an online bookstore</p>
+                </div>
+
+                <div class="year-marker">1996</div>
+                <div class="timeline-item">
+                    <div class="fact-date">JAN 1996</div>
+                    <p>JavaScript created by Brendan Eich at Netscape</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">JUL 1996</div>
+                    <p>PHPv1.0 released by Rasmus Lerdorf</p>
+                </div>
+
+                <div class="year-marker">1997</div>
+                <div class="timeline-item">
+                    <div class="fact-date">MAY 1997</div>
+                    <p>Amazon.com goes public on NASDAQ</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">SEP 1997</div>
+                    <p>Google.com domain registered</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">OCT 1997</div>
+                    <p>First DVD-ROM drives become widely available</p>
+                </div>
+
+                <div class="year-marker">1998</div>
+                <div class="timeline-item">
+                    <div class="fact-date">MAY 1998</div>
+                    <p>iMac G3 introduced with revolutionary translucent design</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">SEP 1998</div>
+                    <p>Google officially incorporated in a garage in California</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">NOV 1998</div>
+                    <p>Half-Life released by Valve, redefining FPS storytelling</p>
+                </div>
+
+                <div class="year-marker">1999</div>
+                <div class="timeline-item">
+                    <div class="fact-date">JAN 1999</div>
+                    <p>The term "blog" is coined (short for "web log")</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">JUN 1999</div>
+                    <p>Napster launches, revolutionizing file sharing</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="fact-date">DEC 1999</div>
+                    <p>Y2K preparations peak as world prepares for millennium bug</p>
+                </div>
+            </section>
+
+            <section id="hardware" class="fact-section">
+                <h2 class="fact-header">HARDWARE SPECS OF THE ERA</h2>
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-date">1990 PC</div>
+                        <p>CPU: Intel 386/486<br>
+                           RAM: 2-8 MB<br>
+                           HDD: 40-100 MB<br>
+                           Display: VGA 640x480<br>
+                           Price: $3,000+</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">1995 PC</div>
+                        <p>CPU: Intel Pentium<br>
+                           RAM: 8-16 MB<br>
+                           HDD: 500 MB-1 GB<br>
+                           Display: SVGA 800x600<br>
+                           Price: $2,000+</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">1999 PC</div>
+                        <p>CPU: Pentium III<br>
+                           RAM: 32-128 MB<br>
+                           HDD: 4-8 GB<br>
+                           Display: 1024x768<br>
+                           Price: $1,500+</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="software" class="fact-section">
+                <h2 class="fact-header">SOFTWARE MILESTONES</h2>
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-date">Operating Systems</div>
+                        <p>1990: MS-DOS 4.01<br>
+                           1992: Windows 3.1<br>
+                           1995: Windows 95<br>
+                           1998: Windows 98</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Popular Software</div>
+                        <p>WordPerfect 5.1<br>
+                           Lotus 1-2-3<br>
+                           Norton Commander<br>
+                           Netscape Navigator</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Game Engines</div>
+                        <p>1993: DOOM Engine<br>
+                           1996: Quake Engine<br>
+                           1998: Unreal Engine<br>
+                           1999: GoldSrc Engine</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="internet" class="fact-section">
+                <h2 class="fact-header">INTERNET EVOLUTION</h2>
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-date">Connection Speeds</div>
+                        <p>1990: 2400 bps<br>
+                           1995: 28.8 kbps<br>
+                           1999: 56 kbps</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Popular Sites</div>
+                        <p>GeoCities<br>
+                           AltaVista<br>
+                           AngelFire<br>
+                           CompuServe</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Web Stats</div>
+                        <p>1991: 1 website<br>
+                           1995: 23,500 websites<br>
+                           1999: ~3.1M websites</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="games" class="fact-section">
+                <h2 class="fact-header">GAMING EVOLUTION</h2>
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-date">PC Gaming</div>
+                        <p>1993: DOOM<br>
+                           1996: Quake<br>
+                           1998: Half-Life<br>
+                           1999: Unreal Tournament</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Consoles</div>
+                        <p>1991: SNES<br>
+                           1994: PlayStation<br>
+                           1996: Nintendo 64</p>
+                    </div>
+                    <div class="fact-card">
+                        <div class="fact-date">Handhelds</div>
+                        <p>1989: Game Boy<br>
+                           1995: Virtual Boy<br>
+                           1998: Game Boy Color</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>[SYSTEM STATUS: OPERATIONAL]</p>
+            <p>DOS TECH ARCHIVES v1.99</p>
+            <div class="system-info">
+                <p>SYSTEM: 486DX/66 MHz | 8 MB RAM | 540 MB HDD</p>
+                <p>DOS 6.22 | VGA 640x480</p>
+                <p>[PRESS ANY KEY TO CONTINUE...]<span class="blink">_</span></p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
