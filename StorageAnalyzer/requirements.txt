@@ -1,0 +1,7 @@
+customtkinter>=5.2.0
+humanize>=4.8.0
+openai>=1.3.0
+CTkMessagebox>=2.5
+pillow>=10.0.0
+typing-extensions>=4.8.0
+asyncio>=3.4.3
