@@ -1,0 +1,14 @@
+{
+  "name": "code-formatter",
+  "version": "1.0.0",
+  "description": "Code formatter in Reason",
+  "main": "index.js",
+  "scripts": {
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world"
+  },
+  "devDependencies": {
+    "bs-platform": "^7.1.1"
+  }
+}
