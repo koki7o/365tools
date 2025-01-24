@@ -1,1 +1,1 @@
-<center><a href="https://buymeacoffee.com/koki7o" target="_blank"><img src="https://www.owlstown.com/assets/icons/bmc-yellow-button-e91f626c5320efe1868dd75673b6edae7d0e2e4f059d40cd3287a7c8536805e6.png" alt="Buy Me A Coffee" height="41" width="174"></a></center>
+<p align="center"><a href="https://buymeacoffee.com/koki7o" target="_blank"><img src="https://www.owlstown.com/assets/icons/bmc-yellow-button-e91f626c5320efe1868dd75673b6edae7d0e2e4f059d40cd3287a7c8536805e6.png" alt="Buy Me A Coffee" height="41" width="174"></a></p>
