@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Enthusiast's Expense Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>
+            Car Enthusiast's Expense Tracker
+            <span class="subtitle">Track Every Mile, Monitor Every Detail</span>
+        </h1>
+        
+        <div class="add-expense">
+            <h2>Log New Expense</h2>
+            <form id="expenseForm">
+                <div class="form-group">
+                    <label for="date">Service Date:</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Service Type:</label>
+                    <select id="type" required>
+                        <option value="fuel">Fuel/Performance</option>
+                        <option value="maintenance">Preventive Maintenance</option>
+                        <option value="repair">Repairs & Upgrades</option>
+                        <option value="insurance">Insurance & Registration</option>
+                        <option value="other">Other Expenses</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Cost ($):</label>
+                    <input type="number" id="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="mileage">Odometer Reading (km):</label>
+                    <input type="number" id="mileage" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Service Notes:</label>
+                    <textarea id="notes" placeholder="Enter service details, part numbers, or any other relevant information..."></textarea>
+                </div>
+                <button type="submit">Record Expense</button>
+            </form>
+        </div>
+
+        <div class="statistics">
+            <h2>Performance Metrics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h3>Total Investment</h3>
+                    <p id="totalExpenses">$0.00</p>
+                </div>
+                <div class="stat-box">
+                    <h3>This Month's Expenses</h3>
+                    <p id="monthExpenses">$0.00</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Monthly Average</h3>
+                    <p id="averageExpenses">$0.00</p>
+                </div>
+                <div class="stat-box">
+                    <h3>Journey Distance</h3>
+                    <p id="totalDistance">0 km</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="expense-history">
+            <h2>Service History</h2>
+            <div class="filters">
+                <select id="filterType">
+                    <option value="all">All Services</option>
+                    <option value="fuel">Fuel/Performance</option>
+                    <option value="maintenance">Preventive Maintenance</option>
+                    <option value="repair">Repairs & Upgrades</option>
+                    <option value="insurance">Insurance & Registration</option>
+                    <option value="other">Other Expenses</option>
+                </select>
+                <select id="filterMonth">
+                    <option value="all">Entire History</option>
+                    <option value="1">Past Month</option>
+                    <option value="3">Past 3 Months</option>
+                    <option value="6">Past 6 Months</option>
+                    <option value="12">Past Year</option>
+                </select>
+            </div>
+            <div class="expense-list" id="expenseList">
+                <!-- Expenses will be added here dynamically -->
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
