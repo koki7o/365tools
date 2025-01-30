@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubTrack - Modern Subscription Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>SubTrack</h1>
+            <button class="add-btn" id="addSubscriptionBtn">+ Add Subscription</button>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Monthly Total</h3>
+                <p class="stat-value" id="monthlyTotal">$0.00</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Subscriptions</h3>
+                <p class="stat-value" id="activeCount">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>Next Payment</h3>
+                <p class="stat-value" id="nextPayment">-</p>
+            </div>
+        </div>
+
+        <main class="subscriptions-container" id="subscriptionsList">
+            <!-- Subscriptions will be added here dynamically -->
+        </main>
+
+        <div class="modal" id="subscriptionModal">
+            <div class="modal-content">
+                <h2>Add New Subscription</h2>
+                <form id="subscriptionForm">
+                    <div class="form-group">
+                        <label for="serviceName">Service Name</label>
+                        <input type="text" id="serviceName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Monthly Price</label>
+                        <input type="number" id="price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="billingDate">Billing Date</label>
+                        <input type="date" id="billingDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="streaming">Streaming</option>
+                            <option value="music">Music</option>
+                            <option value="gaming">Gaming</option>
+                            <option value="software">Software</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="save-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
