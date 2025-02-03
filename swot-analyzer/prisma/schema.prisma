@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model SwotAnalysis {
+  id            String         @id @default(cuid())
+  title         String
+  strengths     SwotItem[]     @relation("StrengthItems")
+  weaknesses    SwotItem[]     @relation("WeaknessItems")
+  opportunities SwotItem[]     @relation("OpportunityItems")
+  threats       SwotItem[]     @relation("ThreatItems")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model SwotItem {
+  id              String        @id @default(cuid())
+  content         String
+  type            String        // "strength", "weakness", "opportunity", "threat"
+  strengthOf      SwotAnalysis? @relation("StrengthItems", fields: [strengthOfId], references: [id], onDelete: Cascade)
+  strengthOfId    String?
+  weaknessOf      SwotAnalysis? @relation("WeaknessItems", fields: [weaknessOfId], references: [id], onDelete: Cascade)
+  weaknessOfId    String?
+  opportunityOf   SwotAnalysis? @relation("OpportunityItems", fields: [opportunityOfId], references: [id], onDelete: Cascade)
+  opportunityOfId String?
+  threatOf        SwotAnalysis? @relation("ThreatItems", fields: [threatOfId], references: [id], onDelete: Cascade)
+  threatOfId      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
