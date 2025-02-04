@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model LifeEvent {
+  id              Int       @id @default(autoincrement())
+  title           String
+  description     String
+  date            DateTime
+  location        String?
+  category        Category  @relation(fields: [categoryId], references: [id])
+  categoryId      Int
+  media           Media[]
+  emotions        String?
+  people          String?
+  decisionContext String?   // What led to this decision
+  alternatives    String?   // Other options considered
+  outcome         String?   // Result of the decision
+  impactRating   Int?      // 1-5 rating of decision impact
+  learnings      String?   // Insights gained from this decision
+  seasonalTiming String?   // Spring, Summer, Fall, Winter
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Category {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  color     String      @default("#000000")
+  events    LifeEvent[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model Media {
+  id          Int       @id @default(autoincrement())
+  url         String
+  type        String    // image, video, document
+  caption     String?
+  event       LifeEvent @relation(fields: [eventId], references: [id])
+  eventId     Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
